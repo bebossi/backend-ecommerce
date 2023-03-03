@@ -1,16 +1,17 @@
 import express from "express";
+import attachCurrentUser from "../middlewares/attachCurrentUser";
+import isAuth from "../middlewares/isAuth";
 import { ProductModel } from "../models/Product/product.model";
 import { UserModel } from "../models/User/user.model";
 
 const productRouter = express.Router();
 
-productRouter.post("/:userId", async (req, res) => {
+productRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
   try {
-    const { userId } = req.params;
-    const newProduct = await ProductModel.create({ ...req.body, user: userId });
+    const newProduct = await ProductModel.create({ ...req.body, user: req.currentUser._id });
 
     await UserModel.findOneAndUpdate(
-      { _id: userId },
+      { _id: req.currentUser._id },
       { $push: { products: newProduct._id } },
       { new: true, runValidators: true }
     );
@@ -54,6 +55,7 @@ productRouter.put("/:productId", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 
 export { productRouter };
