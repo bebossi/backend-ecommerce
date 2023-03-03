@@ -83,7 +83,9 @@ userRouter.put("/", isAuth, attachCurrentUser, async (req, res) => {
   }
 }); 
 
-userRouter.delete("/", async(req, res) => {
+
+// Arrumar para soft delete
+userRouter.delete("/",isAuth, attachCurrentUser, async(req, res) => {
     try{
       await UserModel.findOneAndDelete({_id: req.currentUser._id})
   
