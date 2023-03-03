@@ -83,4 +83,16 @@ userRouter.put("/", isAuth, attachCurrentUser, async (req, res) => {
   }
 }); 
 
+userRouter.delete("/", async(req, res) => {
+    try{
+      await UserModel.findOneAndDelete({_id: req.currentUser._id})
+  
+      return res.status(204).json({message: "User deleted"})
+  
+    } catch(err){
+      console.log(err);
+      return res.status(500).json(err);
+    }
+  })
+
 export { userRouter };

@@ -12,6 +12,7 @@ const userSchema = new Schema(
     },
     passwordHash: { type: String, required: true },
     role: { type: String, enum: ["ADMIN", "USER"], default: "USER" },
+    addres: { type: String, required: true, trim: true },
   },
   { timestamps: true }
 );
