@@ -1,11 +1,11 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 
 const orderSchema = new Schema(
   {
     buyerId: { type: String, required: true, trim: true },
     status: {
       type: String,
-      enum: ["SHIPPING", "SHIPPED", "OUT FOR DELIVERY", "DELIVERED"],
+      enum: ["SHIPPING", "SHIPPED", "OUT FOR DELIVERY", "DELIVERED"], default: "SHIPPING"
     },
     shipppingAdress: { type: String },
     receiveAdress: { type: String },
@@ -14,8 +14,9 @@ const orderSchema = new Schema(
       enum: ["PIX", "CREDIT", "VISA", "CASH PAYMENT"],
       required: true,
     },
-    orderProducts: [],
-    totalPrice: { type: Number },
+    orderProducts: [{type: Schema.Types.ObjectId, ref: "Product"}],
+    totalPrice: { type: Number }, 
+    quantity: {type: Number}
   },
   { timestamps: true }
 );

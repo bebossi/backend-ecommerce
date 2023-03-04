@@ -2,20 +2,30 @@ import express from "express";
 import { OrderModel } from "../models/Order/order.model.js";
 import isAuth from "../middlewares/isAuth.js";
 import attachCurrentUser from "../middlewares/attachCurrentUser.js";
+import { UserModel } from "../models/User/user.model.js";
 import { ProductModel } from "../models/Product/product.model.js";
+
 
 const orderRouter = express.Router();
 
-orderRouter.post("/new-order", isAuth, attachCurrentUser, async (req, res) => {
+orderRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
   try {
-    let newOrder = await OrderModel.create({
+    const { productId, quantity } = req.body;
+
+    const newOrder = await OrderModel.create({
       ...req.body,
       buyerId: req.currentUser._id,
+      orderProducts: productId 
     });
 
-    await ProductModel.findOneAndUpdate(
+    const product = await ProductModel.findById(productId);
+
+    product.quantity -= quantity;
+    await product.save();
+
+     await UserModel.findOneAndUpdate(
       { _id: req.currentUser._id },
-      { $push: { orderProducts: product._id } },
+      { $push: { orderProducts: newOrder._id } },
       { new: true, runValidators: true }
     );
 
@@ -25,5 +35,38 @@ orderRouter.post("/new-order", isAuth, attachCurrentUser, async (req, res) => {
     return res.status(500).json(err);
   }
 });
+
+
+
+orderRouter.get("/:orderId", isAuth, attachCurrentUser, async(req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    const order = await OrderModel.findById(orderId).populate('buyerId').populate('orderProducts');
+    if (!order) {
+      return res.status(404).send({ message: 'Order not found' });
+    }
+
+    return res.status(200).json(order);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: 'Internal server error' });
+  }
+
+})
+
+orderRouter.get("/", isAuth, attachCurrentUser, async(req, res) => { 
+  try{
+
+    const orders = await OrderModel.find();
+
+    return res.status(200).json(orders)
+
+  } catch(err){
+    console.error(err);
+    res.status(500).send({ message: 'Internal server error' });
+  }
+})
+
 
 export default orderRouter;

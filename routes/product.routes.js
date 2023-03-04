@@ -12,13 +12,13 @@ productRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
     const newProduct = await ProductModel.create({
       ...req.body,
       sellerId: req.currentUser._id,
-
+    })
 
     await UserModel.findOneAndUpdate(
       { _id: req.currentUser._id },
       { $push: { products: newProduct._id } },
       { new: true, runValidators: true }
-    );
+    )
 
     return res.status(201).json(newProduct);
   } catch (err) {
@@ -63,5 +63,30 @@ productRouter.put("/:productId",isAuth, attachCurrentUser, async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+productRouter.get("/", isAuth, async (req, res) => {
+  try {
+    const products = await ProductModel.find({}, { body: 0 });
+
+    return res.status(200).json(products);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
+});
+
+productRouter.get("/productId", isAuth, attachCurrentUser, async(req, res) => {
+  try{
+    const {productId} = req.params
+
+    const product = await ProductModel.findOne({_id: productId})
+
+    return res.status(200).json(product);
+
+  } catch(err){
+    console.log(err);
+    return res.status(500).json(err);
+  }
+})
 
 export { productRouter };

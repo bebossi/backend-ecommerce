@@ -14,6 +14,7 @@ const userSchema = new Schema(
     passwordHash: { type: String, required: true },
     role: { type: String, enum: ["ADMIN", "USER"], default: "USER" },
     products: [{type: Schema.Types.ObjectId, ref: "Product"}],
+    orders: [{type: Schema.Types.ObjectId, ref: "Order"}],
     CEP: {type: Number, required: true}, 
     state: {type: String},
     city: {type: String},
