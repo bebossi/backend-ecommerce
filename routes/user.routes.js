@@ -1,5 +1,5 @@
 import express from "express";
-import { UserModel } from "../models/user.model.js";
+import { UserModel } from "../models/User/user.model.js";
 import bcrypt from "bcrypt";
 import { generateToken } from "../config/jwt.config.js";
 import isAuth from "../middlewares/isAuth.js";

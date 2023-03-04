@@ -1,8 +1,8 @@
 import express from "express";
-import attachCurrentUser from "../middlewares/attachCurrentUser";
-import isAuth from "../middlewares/isAuth";
-import { ProductModel } from "../models/Product/product.model";
-import { UserModel } from "../models/User/user.model";
+import attachCurrentUser from "../middlewares/attachCurrentUser.js";
+import isAuth from "../middlewares/isAuth.js";
+import { ProductModel } from "../models/Product/product.model.js";
+import { UserModel } from "../models/User/user.model.js";
 
 const productRouter = express.Router();
 
@@ -55,6 +55,8 @@ productRouter.put("/:productId", async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+productRouter.get()
 
 
 
