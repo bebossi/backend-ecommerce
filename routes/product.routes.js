@@ -8,7 +8,11 @@ const productRouter = express.Router();
 
 productRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
   try {
-    const newProduct = await ProductModel.create({ ...req.body, sellerId: req.currentUser._id });
+
+    const newProduct = await ProductModel.create({
+      ...req.body,
+      sellerId: req.currentUser._id,
+
 
     await UserModel.findOneAndUpdate(
       { _id: req.currentUser._id },
@@ -37,17 +41,17 @@ productRouter.put("/:productId",isAuth, attachCurrentUser, async (req, res) => {
     }
 
     const updatedProduct = await ProductModel.findOneAndUpdate(
-        {_id: productId},
-        {...req.body},
-        {new: true, runValidators: true}
-        );
+      { _id: productId },
+      { ...req.body },
+      { new: true, runValidators: true }
+    );
 
-        await UserModel.findOneAndUpdate(
-            {_id: productId},
-            {$push: {products: updatedProduct._id}},
-            {new: true, runValidators: true}
-            )
-        return res.status(200).json(updatedProduct)
+    await UserModel.findOneAndUpdate(
+      { _id: productId },
+      { $push: { products: updatedProduct._id } },
+      { new: true, runValidators: true }
+    );
+    return res.status(200).json(updatedProduct);
   } catch (err) {
     console.log(err);
     if (err.name === "ValidationError") {
@@ -59,7 +63,5 @@ productRouter.put("/:productId",isAuth, attachCurrentUser, async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-
 
 export { productRouter };
