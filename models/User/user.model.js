@@ -23,6 +23,6 @@ const userSchema = new Schema(
     neighborhood: {type: String, required: true},
   },
   { timestamps: true }
-);
+); 
 
 export const UserModel = model("User", userSchema);
