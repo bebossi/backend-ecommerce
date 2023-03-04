@@ -9,9 +9,9 @@ const productSchema = new Schema(
     price: { type: Number, required: true,  min: 0},
     image: {type: String},
     quantity: {type: Number,  min: 0 },
-    isNew: {type: Boolean}
+    isUsed: { type: Boolean }
   },
   { timestamps: true }
 );
 
-export const ProductModel = model("Product", productSchema);
+export const ProductModel = model("Product", productSchema); 
