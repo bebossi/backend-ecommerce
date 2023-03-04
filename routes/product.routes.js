@@ -8,7 +8,7 @@ const productRouter = express.Router();
 
 productRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
   try {
-    const newProduct = await ProductModel.create({ ...req.body, user: req.currentUser._id });
+    const newProduct = await ProductModel.create({ ...req.body, sellerId: req.currentUser._id });
 
     await UserModel.findOneAndUpdate(
       { _id: req.currentUser._id },
@@ -29,9 +29,13 @@ productRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
   }
 });
 
-productRouter.put("/:productId", async (req, res) => {
+productRouter.put("/:productId",isAuth, attachCurrentUser, async (req, res) => {
   try {
     const { productId } = req.params;
+    if(!req.currentUser.products.includes(req.params.productId)){
+      return res.status(401).json("Você não tem permissão de fazer isso.");
+    }
+
     const updatedProduct = await ProductModel.findOneAndUpdate(
         {_id: productId},
         {...req.body},
