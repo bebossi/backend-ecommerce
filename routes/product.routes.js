@@ -56,8 +56,6 @@ productRouter.put("/:productId", async (req, res) => {
   }
 });
 
-productRouter.get()
-
 
 
 export { productRouter };

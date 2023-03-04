@@ -13,7 +13,7 @@ const userSchema = new Schema(
     },
     passwordHash: { type: String, required: true },
     role: { type: String, enum: ["ADMIN", "USER"], default: "USER" },
-    products: [{types: Schema.Types.ObjectId, ref: "Product"}],
+    products: [{type: Schema.Types.ObjectId, ref: "Product"}],
     CEP: {type: Number, required: true}, 
     state: {type: String},
     city: {type: String},
