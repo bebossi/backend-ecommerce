@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 
 const userSchema = new Schema(
   {
-    userName: {type: String, required: true},
+    userName: { type: String, required: true },
     name: { type: String, required: true, trim: true },
     email: {
       type: String,
@@ -13,16 +13,17 @@ const userSchema = new Schema(
     },
     passwordHash: { type: String, required: true },
     role: { type: String, enum: ["ADMIN", "USER"], default: "USER" },
-    products: [{type: Schema.Types.ObjectId, ref: "Product"}],
-    CEP: {type: Number, required: true}, 
-    state: {type: String},
-    city: {type: String},
-    street: {type: String, required: true},
-    houseNumber: {type: Number, required: true},
-    apartmentNumber: {type: Number},
-    neighborhood: {type: String, required: true},
+    products: [{ type: Schema.Types.ObjectId, ref: "Product" }],
+    orders: [{ type: Schema.Types.ObjectId, ref: "Order" }],
+    CEP: { type: Number, required: true },
+    state: { type: String },
+    city: { type: String },
+    street: { type: String, required: true },
+    houseNumber: { type: Number, required: true },
+    apartmentNumber: { type: Number },
+    neighborhood: { type: String, required: true },
   },
   { timestamps: true }
-); 
+);
 
 export const UserModel = model("User", userSchema);
