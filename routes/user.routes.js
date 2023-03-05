@@ -76,59 +76,56 @@ userRouter.put("/", isAuth, attachCurrentUser, async (req, res) => {
       { new: true, runValidators: true }
     );
 
-    delete updatedUser._doc.passwordHash
+    delete updatedUser._doc.passwordHash;
 
     return res.status(200).json(updatedUser);
   } catch (err) {
     console.log(err);
     return res.status(500).json(err);
   }
-}); 
-
+});
 
 // Arrumar para soft delete
-userRouter.delete("/",isAuth, attachCurrentUser, async(req, res) => {
-    try{
-      await UserModel.findOneAndDelete({_id: req.currentUser._id})
-  
-      return res.status(204).json({message: "User deleted"})
-  
-    } catch(err){
-      console.log(err);
-      return res.status(500).json(err);
-    }
-  })
+userRouter.delete("/", isAuth, attachCurrentUser, async (req, res) => {
+  try {
+    await UserModel.findOneAndDelete({ _id: req.currentUser._id });
 
-  userRouter.get("/", async(req, res) => {
-    try{
+    return res.status(204).json({ message: "User deleted" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
+});
 
-      const users = await UserModel.find()
+userRouter.get("/", async (req, res) => {
+  try {
+    const users = await UserModel.find();
 
-      return res.status(200).json(users)
-
-    } catch(err){
-      console.log(err);
-      return res.status(500).json(Error);
-    }
-  })
-
-  userRouter.get("/:userId", isAuth, async(req, res) => {
-    try{
-      const user = await UserModel.findOne(
-        {_id: req.params.userId},
-        {passwordHash: 0},
-      ).populate("orders").populate("products")
-      console.log(user.orders)
-
-      if (!user) {
-        return res.status(404).send({ message: "User not found" });
-      }
-
-        return res.status(200).json(user)
-    } catch(err){
-      console.log(err);
+    return res.status(200).json(users);
+  } catch (err) {
+    console.log(err);
     return res.status(500).json(Error);
-    }
-  } )
+  }
+});
 
-export { userRouter }; 
+userRouter.get("/:userId", isAuth, async (req, res) => {
+  try {
+    const user = await UserModel.findOne(
+      { _id: req.params.userId },
+      { passwordHash: 0 }
+    )
+      .populate("orders")
+      .populate("products");
+
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    return res.status(200).json(user);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(Error);
+  }
+});
+
+export { userRouter };
