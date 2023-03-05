@@ -35,14 +35,11 @@ orderRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
   }
 });
 
-
-orderRouter.get("/", isAuth, attachCurrentUser, async (req, res) => {
+orderRouter.get("/:userId", isAuth, attachCurrentUser, async (req, res) => {
   try {
-    const orders = await OrderModel.find()
-    .populate("buyerId", { name: 1 })
-    .populate("orderProducts", { productName: 1, price: 1 })
-    .populate("sellerId", { name: 1 });
-    
+    const userId = req.params.userId;
+    const orders = await OrderModel.find({ buyerId: userId }).populate('orderProducts');
+  
     return res.status(200).json(orders);
   } catch (err) {
     console.error(err);
@@ -56,14 +53,18 @@ orderRouter.get(
   attachCurrentUser,
   async (req, res) => {
     try {
-      const { buyerId ,orderId } = req.params;
+      const { buyerId, orderId } = req.params;
 
       const order = await OrderModel.findById(orderId)
-        .populate("buyerId", { name: 1 })
+        .populate("buyerId", { name: 1, })
         .populate("orderProducts", { productName: 1, price: 1 });
 
       if (!order) {
         return res.status(404).send({ message: "Order not found" });
+      }
+
+      if (req.currentUser.id !== buyerId && req.currentUser.id !== order.sellerId._id) {
+        return res.status(403).send({ message: "Access denied" });
       }
 
       return res.status(200).json(order);
