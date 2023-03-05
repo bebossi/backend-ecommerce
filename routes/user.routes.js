@@ -4,6 +4,8 @@ import bcrypt from "bcrypt";
 import { generateToken } from "../config/jwt.config.js";
 import isAuth from "../middlewares/isAuth.js";
 import attachCurrentUser from "../middlewares/attachCurrentUser.js";
+import { OrderModel } from "../models/Order/order.model.js";
+import { ProductModel } from "../models/Product/product.model.js";
 
 const userRouter = express.Router();
 
@@ -115,7 +117,12 @@ userRouter.delete("/",isAuth, attachCurrentUser, async(req, res) => {
       const user = await UserModel.findOne(
         {_id: req.params.userId},
         {passwordHash: 0},
-      ).populate("products")
+      ).populate("orders").populate("products")
+      console.log(user.orders)
+
+      if (!user) {
+        return res.status(404).send({ message: "User not found" });
+      }
 
         return res.status(200).json(user)
     } catch(err){
