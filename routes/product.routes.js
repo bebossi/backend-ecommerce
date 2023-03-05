@@ -70,7 +70,10 @@ productRouter.put(
 
 productRouter.get("/", isAuth, async (req, res) => {
   try {
-    const products = await ProductModel.find({}, { body: 0 }).populate("sellerId", {name: 1, products: 1, orders: 1})
+    const products = await ProductModel.find({}, { body: 0 }).populate(
+      "sellerId",
+      { name: 1, products: 1, orders: 1 }
+    );
 
     return res.status(200).json(products);
   } catch (err) {
@@ -79,23 +82,20 @@ productRouter.get("/", isAuth, async (req, res) => {
   }
 });
 
-productRouter.get(
-  "/:productId",
-  isAuth,
-  attachCurrentUser,
-  async (req, res) => {
-    try {
-      const { productId } = req.params;
+productRouter.get("/:productId", isAuth, async (req, res) => {
+  try {
+    const { productId } = req.params;
 
-      const product = await ProductModel.findOne({ _id: productId }).populate("sellerId");
+    const product = await ProductModel.findOne({ _id: productId }).populate(
+      "sellerId"
+    );
 
-      return res.status(200).json(product);
-    } catch (err) {
-      console.log(err);
-      return res.status(500).json(err);
-    }
+    return res.status(200).json(product);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
   }
-);
+});
 productRouter.delete(
   "/:productId",
   isAuth,

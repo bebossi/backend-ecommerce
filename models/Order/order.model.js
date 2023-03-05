@@ -2,7 +2,7 @@ import { Schema, model, Types } from "mongoose";
 
 const orderSchema = new Schema(
   {
-    sellerId: {type: String, required:true},
+    sellerId: { type: Schema.Types.ObjectId, ref: "User"},
     buyerId: { type: Schema.Types.ObjectId, ref: "User" },
     status: {
       type: String,
