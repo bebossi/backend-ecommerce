@@ -5,7 +5,6 @@ import attachCurrentUser from "../middlewares/attachCurrentUser.js";
 import { UserModel } from "../models/User/user.model.js";
 import { ProductModel } from "../models/Product/product.model.js";
 
-
 const orderRouter = express.Router();
 
 orderRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
@@ -15,7 +14,7 @@ orderRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
     const newOrder = await OrderModel.create({
       ...req.body,
       buyerId: req.currentUser._id,
-      orderProducts: productId 
+      orderProducts: productId,
     });
 
     const product = await ProductModel.findById(productId);
@@ -23,7 +22,7 @@ orderRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
     product.quantity -= quantity;
     await product.save();
 
-     await UserModel.findOneAndUpdate(
+    await UserModel.findOneAndUpdate(
       { _id: req.currentUser._id },
       { $push: { orderProducts: newOrder._id } },
       { new: true, runValidators: true }
@@ -37,36 +36,41 @@ orderRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
 });
 
 
-
-orderRouter.get("/:orderId", isAuth, attachCurrentUser, async(req, res) => {
+orderRouter.get("/", isAuth, attachCurrentUser, async (req, res) => {
   try {
-    const { orderId } = req.params;
-
-    const order = await OrderModel.findById(orderId).populate('buyerId').populate('orderProducts');
-    if (!order) {
-      return res.status(404).send({ message: 'Order not found' });
-    }
-
-    return res.status(200).json(order);
+    const orders = await OrderModel.find()
+    .populate("buyerId", { name: 1 })
+    .populate("orderProducts", { productName: 1, price: 1 })
+    .populate("sellerId", { name: 1 });
+    
+    return res.status(200).json(orders);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: 'Internal server error' });
+    res.status(500).send({ message: "Internal server error" });
   }
+});
 
-})
+orderRouter.get(
+  "/:buyerId/:orderId",
+  isAuth,
+  attachCurrentUser,
+  async (req, res) => {
+    try {
+      const { buyerId ,orderId } = req.params;
 
-orderRouter.get("/", isAuth, attachCurrentUser, async(req, res) => { 
-  try{
+      const order = await OrderModel.findById(orderId)
+        .populate("buyerId", { name: 1 })
+        .populate("orderProducts", { productName: 1, price: 1 });
 
-    const orders = await OrderModel.find();
+      if (!order) {
+        return res.status(404).send({ message: "Order not found" });
+      }
 
-    return res.status(200).json(orders)
-
-  } catch(err){
-    console.error(err);
-    res.status(500).send({ message: 'Internal server error' });
+      return res.status(200).json(order);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ message: "Internal server error" });
+    }
   }
-})
-
-
+);
 export default orderRouter;
