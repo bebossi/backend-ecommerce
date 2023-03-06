@@ -13,6 +13,6 @@ const productSchema = new Schema(
     isAvaliable: { type: Boolean, required: true, default: true },
   },
   { timestamps: true }
-);
+); 
 
 export const ProductModel = model("Product", productSchema);

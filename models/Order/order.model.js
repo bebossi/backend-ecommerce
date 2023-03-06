@@ -16,7 +16,7 @@ const orderSchema = new Schema(
       enum: ["PIX", "CREDIT", "VISA", "CASH PAYMENT"],
       required: true,
     },
-    orderProducts: [{ type: Schema.Types.ObjectId, ref: "Product" }],
+    productId: { type: Schema.Types.ObjectId, ref: "Product" },
     totalPrice: { type: Number },
     quantity: { type: Number },
   },

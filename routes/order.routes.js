@@ -9,12 +9,11 @@ const orderRouter = express.Router();
 
 orderRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
   try {
-    const { productId, quantity } = req.body;
+    const {productId} = req.body
 
     const newOrder = await OrderModel.create({
       ...req.body,
       buyerId: req.currentUser._id,
-      orderProducts: productId,
     });
 
     const product = await ProductModel.findById(productId);
@@ -24,7 +23,7 @@ orderRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
 
     await UserModel.findOneAndUpdate(
       { _id: req.currentUser._id },
-      { $push: { orderProducts: newOrder._id } },
+      { $push: { orders: newOrder._id } },
       { new: true, runValidators: true }
     );
 
@@ -33,7 +32,7 @@ orderRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
     console.log(err);
     return res.status(500).json(err);
   }
-});
+}); 
 
 orderRouter.get("/:userId", isAuth, attachCurrentUser, async (req, res) => {
   try {
