@@ -16,7 +16,7 @@ userRouter.post("/signup", async (req, res) => {
     const { password } = req.body;
 
     if (!password) {
-      return res.status(400).json({ message: "Email ou senha inválidos" });
+      return res.status(400).json({ message: "Senha invalida." });
     }
 
     const salt = await bcrypt.genSalt(SALT_ROUNDS);

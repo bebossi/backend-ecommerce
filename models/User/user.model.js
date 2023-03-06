@@ -15,13 +15,13 @@ const userSchema = new Schema(
     role: { type: String, enum: ["ADMIN", "USER"], default: "USER" },
     products: [{ type: Schema.Types.ObjectId, ref: "Product" }],
     orders: [{ type: Schema.Types.ObjectId, ref: "Order" }],
-    CEP: { type: Number, required: true },
+    CEP: { type: String, required: true },
     state: { type: String },
     city: { type: String },
     street: { type: String, required: true },
     houseNumber: { type: Number, required: true },
     apartmentNumber: { type: Number },
-    neighborhood: { type: String, required: true },
+    neighborhood: { type: String },
   },
   { timestamps: true }
 );
