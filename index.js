@@ -7,7 +7,7 @@ import { productRouter } from "./routes/product.routes.js";
 import orderRouter from "./routes/order.routes.js";
 import cors from "cors";
 
-dotenv.config();
+dotenv.config(); 
 
 connectDB();
 

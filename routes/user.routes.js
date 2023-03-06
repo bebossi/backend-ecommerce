@@ -72,8 +72,8 @@ userRouter.put("/", isAuth, attachCurrentUser, async (req, res) => {
   try {
     const updatedUser = await UserModel.findOneAndUpdate(
       { _id: req.currentUser._id },
-      { ...req.body },
-      { new: true, runValidators: true }
+      { ...req.body }, 
+      { new: true, runValidators: true } 
     );
 
     delete updatedUser._doc.passwordHash;
@@ -108,10 +108,10 @@ userRouter.get("/", async (req, res) => {
   }
 });
 
-userRouter.get("/:userId", isAuth, async (req, res) => {
+userRouter.get("/profile", isAuth, attachCurrentUser, async (req, res) => {
   try {
-    const user = await UserModel.findOne(
-      { _id: req.params.userId },
+    const user = await UserModel.findOne( 
+      { _id: req.currentUser._id },
       { passwordHash: 0 }
     )
       .populate("orders")
@@ -129,3 +129,4 @@ userRouter.get("/:userId", isAuth, async (req, res) => {
 });
 
 export { userRouter };
+ 
