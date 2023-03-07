@@ -72,7 +72,7 @@ productRouter.get("/", isAuth, async (req, res) => {
   try {
     const products = await ProductModel.find({}, { body: 0 }).populate(
       "sellerId",
-      { name: 1, products: 1, orders: 1 }
+      { name: 1, products: 1, orders: 1,  image: 1, email: 1}
     );
 
     return res.status(200).json(products);
