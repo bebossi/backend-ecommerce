@@ -20,7 +20,7 @@ const userSchema = new Schema(
     city: { type: String },
     street: { type: String, required: true },
     houseNumber: { type: Number, required: true },
-    apartmentNumber: { type: Number },
+    apartmentNumber: { type: String },
     neighborhood: { type: String },
     image: {type: String}
   },
