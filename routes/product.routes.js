@@ -82,7 +82,7 @@ productRouter.get("/", isAuth, async (req, res) => {
   }
 });
 
-productRouter.get("/:productId", isAuth, async (req, res) => {
+productRouter.get("/product-details/:productId", isAuth, async (req, res) => {
   try {
     const { productId } = req.params;
 
