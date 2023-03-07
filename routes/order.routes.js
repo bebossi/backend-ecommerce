@@ -74,8 +74,9 @@ orderRouter.get(
       const buyerId = toString(req.currentUser._id);
 
       const order = await OrderModel.findById(orderId)
-        .populate("buyerId", { name: 1 })
-        .populate("productId", { productName: 1, price: 1 });
+        .populate("buyerId")
+        .populate("productId", { productName: 1, price: 1, image: 1 })
+        .populate("sellerId");
 
       if (!order) {
         return res.status(404).send({ message: "Order not found" });
