@@ -9,18 +9,17 @@ const orderRouter = express.Router();
 
 orderRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
   try {
-    const {productId} = req.body
+    const { productId } = req.body;
 
     const product = await ProductModel.findById(productId);
 
     const newOrder = await OrderModel.create({
       ...req.body,
       buyerId: req.currentUser._id,
-      totalPrice: product.price
+      totalPrice: product.price,
     });
 
-
-    product.quantity -= req.body.quantity; 
+    product.quantity -= req.body.quantity;
     await product.save();
 
     await UserModel.findOneAndUpdate(
@@ -34,14 +33,29 @@ orderRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
     console.log(err);
     return res.status(500).json(err);
   }
-}); 
+});
 
 orderRouter.get("/get", isAuth, attachCurrentUser, async (req, res) => {
   try {
     const userId = req.currentUser._id;
-    const orders = await OrderModel.find({ buyerId: userId }).populate(
-      "productId"
-    ).populate("sellerId").populate("buyerId");
+    const orders = await OrderModel.find({ buyerId: userId })
+      .populate("productId", { productName: 1 })
+      .populate("sellerId", {
+        state: 1,
+        city: 1,
+        street: 1,
+        houseNumber: 1,
+        apartmentNumber: 1,
+        CEP: 1,
+      })
+      .populate("buyerId", {
+        state: 1,
+        city: 1,
+        street: 1,
+        houseNumber: 1,
+        apartmentNumber: 1,
+        CEP: 1,
+      });
 
     return res.status(200).json(orders);
   } catch (err) {
@@ -51,27 +65,29 @@ orderRouter.get("/get", isAuth, attachCurrentUser, async (req, res) => {
 });
 
 orderRouter.get(
-  "/:buyerId/:orderId",
+  "/order-details/:orderId",
   isAuth,
   attachCurrentUser,
   async (req, res) => {
     try {
-      const { buyerId, orderId } = req.params;
+      const { orderId } = req.params;
+      const buyerId = toString(req.currentUser._id);
 
       const order = await OrderModel.findById(orderId)
         .populate("buyerId", { name: 1 })
-        .populate("orderProducts", { productName: 1, price: 1 });
+        .populate("productId", { productName: 1, price: 1 });
 
       if (!order) {
         return res.status(404).send({ message: "Order not found" });
       }
 
-      if (
-        req.currentUser.id !== buyerId &&
-        req.currentUser.id !== order.sellerId._id
-      ) {
-        return res.status(403).send({ message: "Access denied" });
-      }
+      // acrescentar requisição de verificar se e buyer ou seller
+      // if (
+      //   req.currentUser._id !== toString(order.buyerId._id) ||
+      //   req.currentUser._id !== toString(order.sellerId)
+      // ) {
+      //   return res.status(403).send({ message: "Access denied" });
+      // }
 
       return res.status(200).json(order);
     } catch (err) {
