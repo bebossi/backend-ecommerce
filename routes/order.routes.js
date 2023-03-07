@@ -11,14 +11,16 @@ orderRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
   try {
     const {productId} = req.body
 
+    const product = await ProductModel.findById(productId);
+
     const newOrder = await OrderModel.create({
       ...req.body,
       buyerId: req.currentUser._id,
+      totalPrice: product.price
     });
 
-    const product = await ProductModel.findById(productId);
 
-    product.quantity -= quantity;
+    product.quantity -= req.body.quantity; 
     await product.save();
 
     await UserModel.findOneAndUpdate(
@@ -34,12 +36,12 @@ orderRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
   }
 }); 
 
-orderRouter.get("/:userId", isAuth, attachCurrentUser, async (req, res) => {
+orderRouter.get("/get", isAuth, attachCurrentUser, async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.currentUser._id;
     const orders = await OrderModel.find({ buyerId: userId }).populate(
-      "orderProducts"
-    );
+      "productId"
+    ).populate("sellerId").populate("buyerId");
 
     return res.status(200).json(orders);
   } catch (err) {
