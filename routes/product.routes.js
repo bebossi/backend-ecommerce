@@ -72,7 +72,7 @@ productRouter.get("/", isAuth, async (req, res) => {
   try {
     const products = await ProductModel.find({}, { body: 0 }).populate(
       "sellerId",
-      { name: 1, products: 1, orders: 1,  image: 1, email: 1}
+      { name: 1, products: 1, orders: 1, image: 1, email: 1 }
     );
 
     return res.status(200).json(products);
@@ -81,6 +81,27 @@ productRouter.get("/", isAuth, async (req, res) => {
     return res.status(500).json(err);
   }
 });
+
+productRouter.get(
+  "/products-user",
+  isAuth,
+  attachCurrentUser,
+  async (req, res) => {
+    try {
+      const sellerId = req.currentUser._id;
+
+      const products = await ProductModel.find(
+        { sellerId: sellerId },
+        { body: 0 }
+      );
+
+      return res.status(200).json(products);
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json(err);
+    }
+  }
+);
 
 productRouter.get("/product-details/:productId", isAuth, async (req, res) => {
   try {
