@@ -10,6 +10,7 @@ const productSchema = new Schema(
     image: { type: String },
     quantity: { type: Number, min: 0 },
     isUsed: { type: Boolean },
+    isFavorite: { type: Boolean, default: false },
     isAvaliable: { type: Boolean, required: true, default: true },
   },
   { timestamps: true }
