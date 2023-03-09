@@ -17,7 +17,7 @@ const orderSchema = new Schema(
       required: true,
     },
     productId: { type: Schema.Types.ObjectId, ref: "Product" },
-    totalPrice: { type: Number },
+    totalPrice: { type: String },
     quantity: { type: Number },
   },
   { timestamps: true }
