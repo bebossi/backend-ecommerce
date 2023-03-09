@@ -129,8 +129,8 @@ productRouter.delete(
           .json("Você não tem permissão para realizar essa ação!");
       }
 
-      const deletedProduct = await ProductModel.deleteOne({
-        _id: req.params.productId,
+      await ProductModel.updateOne({
+        isAvaliable: false,
       });
 
       await UserModel.findOneAndUpdate(

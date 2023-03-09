@@ -16,7 +16,6 @@ orderRouter.post("/", isAuth, attachCurrentUser, async (req, res) => {
     const newOrder = await OrderModel.create({
       ...req.body,
       buyerId: req.currentUser._id,
-      
     });
 
     product.quantity -= req.body.quantity;
